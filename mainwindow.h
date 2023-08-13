@@ -15,6 +15,7 @@
 #include <QTextEdit>
 #include <QMenu>
 #include <QAction>
+#include <QLineEdit>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

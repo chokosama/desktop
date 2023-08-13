@@ -127,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
         ui->textEditor->setText(contents[index]);
     });
+    //绑定上一个按钮
     connect(ui->preBtn,&QPushButton::clicked,this,[=](){
         if(index!=0)
         {
@@ -139,6 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
             QMessageBox::warning(this,"警告","已经是第一个了");
         }
     });
+    //绑定下一个按钮
     connect(ui->nextBtn,&QPushButton::clicked,this,[=](){
         if(index!=MaxSize-1)
         {
@@ -151,6 +153,7 @@ MainWindow::MainWindow(QWidget *parent)
             QMessageBox::warning(this,"警告","已经是最后一个了");
         }
     });
+    //绑定复制按钮
     connect(ui->copyBtn,&QPushButton::clicked,this,[=](){
         if(ui->textEditor->textCursor().hasSelection())
         {
@@ -188,6 +191,30 @@ MainWindow::MainWindow(QWidget *parent)
             }
             clipboard->setMimeData(mimeDatas);
         }
+    });
+//绑定搜素功能
+    connect(this->ui->searchBtn,&QPushButton::clicked,this,[=](){
+        if(this->ui->lineEdit->text()!="")
+        {
+            for(int i=0;i<MaxSize;i++)
+            {
+                if(this->contents[i].contains(this->ui->lineEdit->text()))
+                {
+                    this->index=i;
+                    this->ui->textEditor->setText(this->contents[i]);
+                    this->ui->label->setText(QString::number(index+1)+"/"+QString::number(MaxSize));
+                    return;
+                }
+            }
+        }
+        else
+        {
+            return;
+        }
+    });
+    //添加回车搜素的功能
+    connect(this->ui->lineEdit,&QLineEdit::editingFinished,this->ui->searchBtn,[=](){
+        emit this->ui->searchBtn->clicked();
     });
 }
 
