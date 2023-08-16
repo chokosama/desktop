@@ -6,32 +6,14 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    thr=new myThread(&(this->elementArray),this->MaxSize);
+    thr->start();
     ui->setupUi(this);
     //初始化剪切板的实列
     this->clipboard=QGuiApplication::clipboard();
     this->index=0;
     ui->textEditor->setReadOnly(true);
     this->setWindowIcon(QIcon("://contents/icon.jpg"));
-    //读取element.ini文件
-    this->file=new QFile("./contents/element.ini");
-    QByteArray Btemp;
-    //通过element.ini文件中的内容来初始化elementArray
-    if(this->file->open(QIODevice::ReadOnly)&&QString::fromUtf8(Btemp=file->readLine())!="")
-    {
-        for(int i=0;i<MaxSize;i++)
-        {
-            this->elementArray.push_back(static_cast<int>(Btemp[i]-'0'));
-        }
-    }
-    else
-    {
-        this->file->open(QIODevice::WriteOnly);
-        for(int i=0;i<MaxSize;i++)
-        {
-            this->elementArray.push_back(0);
-        }
-    }
-    delete this->file;
     //初始化urllist和contents
     for(int i=0;i<MaxSize;i++)
     {
@@ -40,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
         QString s;
         this->contents.push_back(s);
     }
+    this->thr->wait();
+    delete thr;
     //读内容文件
     for(int i=0;i<MaxSize;i++)
     {
@@ -251,6 +235,11 @@ MainWindow::~MainWindow()
             fs.close();
         }
     }
+    if(file!=nullptr)
+    {
+        delete file;
+        file=nullptr;
+    }
     delete ui;
 }
 
@@ -271,4 +260,33 @@ void MainWindow::changeEvent(QEvent *event)
 void MainWindow::getIcon(QSystemTrayIcon* icon)
 {
     this->icon=icon;
+}
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    this->file=new QFile("./background/background.png");
+    if(file->exists())
+    {
+        QPixmap pix("./background/background.png");
+        pix.scaled(this->width(),this->height(),Qt::KeepAspectRatio);
+        painter.drawPixmap(0,0,pix);
+        delete file;
+        return;
+    }
+    delete file;
+    file=nullptr;
+    file=new QFile("./background/background.jpg");
+    if(file->exists())
+    {
+        QPixmap pix("./background/background.png");
+        pix.scaled(this->width(),this->height(),Qt::KeepAspectRatio);
+        painter.drawPixmap(0,0,pix);
+        delete file;
+        file=nullptr;
+        return;
+    }
+    if(file!=nullptr)
+        delete file;
+    file=nullptr;
 }

@@ -11,9 +11,11 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    mythread.cpp
 
 HEADERS += \
     mainwindow.h \
+    mythread.h
 
 FORMS += \
     mainwindow.ui

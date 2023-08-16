@@ -5,10 +5,10 @@
 #include <QApplication>
 #include <QString>
 #include <QList>
+#include <QVector>
 #include <QMimeData>
 #include <QUrl>
 #include <QFile>
-#include <QDebug>
 #include <QMessageBox>
 #include <QWindowStateChangeEvent>
 #include <QSystemTrayIcon>
@@ -16,6 +16,8 @@
 #include <QMenu>
 #include <QAction>
 #include <QLineEdit>
+#include <QPainter>
+#include "mythread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,6 +32,7 @@ public:
     ~MainWindow();
     void changeEvent(QEvent *event);
     void getIcon(QSystemTrayIcon* icon);
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     int MaxSize=10;
@@ -41,6 +44,8 @@ private:
     QVector<int> elementArray;
     QFile* file;
     QSystemTrayIcon* icon;
+    myThread* thr;
+private:
 };
 
 
