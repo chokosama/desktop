@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->clipboard=QGuiApplication::clipboard();
     this->index=0;
     ui->textEditor->setReadOnly(true);
-    this->setWindowIcon(QIcon("://contents/icon.jpg"));
+    this->setWindowIcon(QIcon("://contents//icon.jpg"));
     //初始化urllist和contents
     for(int i=0;i<MaxSize;i++)
     {
@@ -25,40 +25,19 @@ MainWindow::MainWindow(QWidget *parent)
     this->thr->wait();
     delete thr;
     //读内容文件
+    QVector<myThread*> thrArr;
     for(int i=0;i<MaxSize;i++)
     {
-        switch(elementArray[i])
-        {
-        case 0:
-            break;
-        case 1:
-            this->file=new QFile("./contents/string"+QString::number(i)+".txt");
-            if(file->open(QIODevice::ReadOnly))
-            {
-                this->contents[i]=QString::fromUtf8(file->readAll());
-            }
-            else
-            {
-                file->open(QIODevice::WriteOnly);
-            }
-            file->close();
-            delete file;
-            break;
-        case 2:
-            this->file=new QFile("./contents/string"+QString::number(i)+".txt");
-            if(file->open(QIODevice::ReadOnly))
-            {
-                this->contents[i]=QString::fromUtf8(file->readAll());
-                foreach (QString s,QString::fromUtf8(file->readAll()).split('\n'))
-                {
-                    QUrl u(s);
-                    this->urllist[i].push_back(u);
-                }
-            }
-            this->file->close();
-            delete this->file;
-            break;
-        }
+        thrArr.push_back(new myThread(i,this->elementArray[i],this->contents,this->urllist));
+    }
+    for(int i=0;i<MaxSize;i++)
+    {
+        thrArr[i]->start();
+    }
+    for(int i=0;i<MaxSize;i++)
+    {
+        thrArr[i]->wait();
+        delete thrArr[i];
     }
     //将文本展示在textbrower中
     this->ui->textEditor->setText(this->contents[index]);
@@ -280,7 +259,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
     if(file->exists())
     {
         QPixmap pix("./background/background.png");
-        pix.scaled(this->width(),this->height(),Qt::KeepAspectRatio);
+        pix.scaled(this->width(),this->height());
         painter.drawPixmap(0,0,pix);
         delete file;
         file=nullptr;
