@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     thr=new myThread(&(this->elementArray),this->MaxSize);
     thr->start();
     ui->setupUi(this);
+    this->setWindowTitle("clipHelper");
     //初始化剪切板的实列
     this->clipboard=QGuiApplication::clipboard();
     this->index=0;
@@ -28,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     QVector<myThread*> thrArr;
     for(int i=0;i<MaxSize;i++)
     {
-        thrArr.push_back(new myThread(i,this->elementArray[i],this->contents,this->urllist));
+        thrArr.push_back(new myThread(i,this->elementArray[i],&(this->contents),&(this->urllist)));
     }
     for(int i=0;i<MaxSize;i++)
     {
@@ -175,6 +176,8 @@ MainWindow::MainWindow(QWidget *parent)
             return;
         }
     });
+
+
     //添加回车搜素的功能
     connect(this->ui->lineEdit,&QLineEdit::editingFinished,this->ui->searchBtn,[=](){
         emit this->ui->searchBtn->clicked();

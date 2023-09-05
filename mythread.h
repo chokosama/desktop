@@ -14,13 +14,13 @@ class myThread : public QThread
     Q_OBJECT
 public:
     myThread(QVector<int>* ele,int MaxSize);
-    myThread(int num,int cases,QList<QString> &contents,QList<QList<QUrl>>& urllist);
+    myThread(int num,int cases,QList<QString> *contents,QList<QList<QUrl>> *urllist);
     void run() override;
 
 private:
     QVector<int> *elementArray;
-    QList<QString> contents;
-    QList<QList<QUrl>> urllist;
+    QList<QString> *contents;
+    QList<QList<QUrl>> *urllist;
     int MaxSize;
     int cases;
     int num;

@@ -6,7 +6,7 @@ myThread::myThread(QVector<int> *ele,int MaxSize)
     this->MaxSize=MaxSize;
 }
 
-myThread::myThread(int num,int cases,QList<QString> &contents,QList<QList<QUrl>>& urllist)
+myThread::myThread(int num,int cases,QList<QString> *contents,QList<QList<QUrl>> *urllist)
 {
     this->type=1;
     this->num=num;
@@ -29,7 +29,7 @@ void myThread::run()
             file=new QFile("./contents/string"+QString::number(this->num)+".txt");
             if(file->open(QIODevice::ReadOnly))
             {
-                (this->contents)[this->num]=QString::fromUtf8(file->readAll());
+                (*(this->contents))[this->num]=QString::fromUtf8(file->readAll());
             }
             else
             {
@@ -42,11 +42,11 @@ void myThread::run()
             file=new QFile("./contents/string"+QString::number(this->num)+".txt");
             if(file->open(QIODevice::ReadOnly))
             {
-                (this->contents)[this->num]=QString::fromUtf8(file->readAll());
+                (*(this->contents))[this->num]=QString::fromUtf8(file->readAll());
                 foreach (QString s,QString::fromUtf8(file->readAll()).split('\n'))
                 {
                     QUrl u(s);
-                    (this->urllist)[this->num].push_back(u);
+                    (*(this->urllist))[this->num].push_back(u);
                 }
             }
             file->close();
